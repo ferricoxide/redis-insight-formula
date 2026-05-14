@@ -1,52 +1,52 @@
-# repo-template
-Generic repo template for Plus3IT repositories
+redis-insight-formula
+==================
 
-To use this template:
+A SaltStack formula designed to install and configure the [REDIS Insight](https://redis.io/insight/) utility on installation-targets.
 
-1. Select the green "Use this template" button, or [click here](https://github.com/plus3it/repo-template/generate).
-2. Select the repo Owner, give the repo a name, enter a description, select Public or Private, and click "Create repository from template".
-3. Clone the repository and create a new branch.
-4. Configure the following settings on your new repo.
-    * `GENERAL`
-        * `Features`
-            * Turn off Wikis, Sponsorships, Discussions, and Projects
-        * `Pull Requests`
-            * Turn off Squash Merging
-            * Turn off Rebase Merging
-            * Turn on Allow Auto-Merge
-            * Turn on Automatically delete head branches
-        * `Pushes`
-            * Limit how many branches can be updated in a single push: 2
-    * `COLLABORATORS and TEAMS`
-        * `Manage Access`
-            * Add relevant team roles, for example
-            * `tardigrade-admins` (Admin)
-            * `terraform` (Write)
-            * `releasebot` (Write)
-    * `Branches`
-        * `Create Branch Protection rule` for `main`
-            * Turn on Require pull request before merging
-            * Turn on Require approvals
-            * Turn on Dismiss stale pull requests...
-        * `Required Status Checks`
-            * As relevant to projects, for example
-                * WIP
-                * lint/actionlint
-                * lint/tardigradelint
-                * test / mockstacktest                
-            * Turn on Do not allow bypassing the above settings
-5. Edit the following files to customize them for the new repository:
-    * `LICENSE`
-        * Near the end of the file, edit the date and change the repository name
-    * `CHANGELOG.template.md`
-        * Rename to `CHANGELOG.md`, replacing the repo-template changelog
-        * Edit templated items for the new repo
-    * `.bumpversion.cfg`
-        * Edit the version number for the new repo, ask team if not sure what to
-          start with
-    * `README.md`
-        * Replace contents for the new repo
-    * `.github/`
-        * Inspect dependabot and workflow files in case changes are needed for
-          the new repo
-6. Commit the changes and open a pull request
+It is primarily expected that this formula will be run via [P3](https://www.plus3it.com/)'s "[watchmaker](https://watchmaker.readthedocs.io/en/stable/)" framework.
+
+This formula is able to install the REDIS Insight utility on both Linux[^1] and Windows Server[^2] operating environments. Intallation for internet-connected systems may come from the REDIS Insight utility project's ["releases" page](https://github.com/redis/RedisInsight/releases). If installing this way, the formula will install the latest-available version of the content. Alternately:
+
+* Sites whose installation-targets won't be able to reach the REDIS Insight utility project's GitHub repository will need to self-host copies of the desired content.
+* Sites that wish to use a specific version of the REDIS Insight utility will need to target that content
+
+Targeting specific versions of the REDIS Insight utility or local copies of the install-archives can be directed to do so by adding appropriate content to the formula's associated Pillar-data (see thish projct's [pillar.example](pillar.example) file for guidance).
+
+
+## Available states
+
+- [redis-insight](#redis-insight)
+- [redis-insight.clean](#redis-insight.clean)
+- [redis-insight.package](#redis-insight.package)
+- [redis-insight.package.clean](#redis-insight.package.clean)
+- [redis-insight.config](#redis-insight.config)
+- [redis-insight.config.clean](#redis-insight.config.clean)
+
+### redis-insight
+
+Executes the `package` and `config` states to install and configure the REDIS Insight utility
+
+### redis-insight.clean
+
+Executes the `package` and `config` states' `clean` actions to fully uninstall the REDIS Insight utility and remove previously-installed browser policy-configs (and, on Windows, associated registry entries)
+
+### redis-insight.package
+
+Executes _just_ the `package` state to install the REDIS Insight utility package.
+
+### redis-insight.package.clean
+
+Executes _just_ the `package.clean` state to uninstall the REDIS Insight utility package.
+
+### redis-insight.config
+
+Executes _just_ the `config` state to install/configure the REDIS Insight utility client-configuration (etc.) files
+
+### redis-insight.config.clean
+
+Executes _just_ the `config` state to uninstall the REDIS Insight utility client-configuration (etc.) files and, on Windows, remove any registry-keys set by prior install-runs of the formula.
+
+
+
+[^1]: As of this README's writing, only Enterprise Linux and related distros (Red Hat and Oracle Enterprise, CentOS Stream, Rocky and Alma Linux). It has only been specifically tested with EL **_9_** variants.
+[^2]: As of this README's writing, this functionality has only been tested on Windows Server 2022
