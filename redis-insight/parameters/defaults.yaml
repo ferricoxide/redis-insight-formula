@@ -1,0 +1,18 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+#
+# Set default values.
+---
+values:
+  pkg:
+    name: redis-insight
+  rootgroup: root
+  config: '/etc/redis-insight'
+  service:
+    name: redis-insight
+  subcomponent:
+    config: '/etc/redis-insight-subcomponent-formula.conf'
+  # Just here for testing
+  added_in_defaults: defaults_value
+  winner: defaults
+...
