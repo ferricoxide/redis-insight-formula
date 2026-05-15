@@ -41,7 +41,7 @@ Download REDIS Insight RPM:
     - skip_verify: True
     - source: '{{ redis_insight.pkg.download_uri }}'
     - onchanges_in:
-      - pkg: 'Install REDIS Insight RPM'
+      - pkg: 'Install REDIS Insight Dependencies'
 
 {%- else %}
 Download REDIS Insight RPM:
@@ -49,7 +49,7 @@ Download REDIS Insight RPM:
     - name: 'curl -sSLf -o {{ redis_rpm }} {{ download_uri }}'
     - unless: 'test -s {{ redis_rpm }}'
     - onchanges_in:
-      - pkg: 'Install REDIS Insight RPM'
+      - pkg: 'Install REDIS Insight Dependencies'
 {%- endif %}
 
 Install REDIS Insight Dependencies:
