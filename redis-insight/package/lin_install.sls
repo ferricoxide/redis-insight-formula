@@ -5,7 +5,7 @@
 {%- set tplroot = tpldir.split('/')[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as redis_insight with context %}
 
-{%- set target_arch = redis_insight.get('arch', 'amd64') %}
+{%- set target_arch = grains.get('osarch', 'x86_64') %}
 {%- set redis_rpm = '/tmp/Redis-Insight-linux-' ~ target_arch ~ '.rpm' %}
 {%- set redis_install_loc = '/usr/local/bin' %}
 
