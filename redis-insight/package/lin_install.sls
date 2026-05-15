@@ -41,7 +41,7 @@ Download REDIS Insight RPM:
     - skip_verify: True
     - source: '{{ redis_insight.pkg.download_uri }}'
     - onchanges_in:
-      - archive: 'Install REDIS Insight RPM'
+      - pkg: 'Install REDIS Insight RPM'
 
 {%- else %}
 Download REDIS Insight RPM:
@@ -49,11 +49,16 @@ Download REDIS Insight RPM:
     - name: 'curl -sSLf -o {{ redis_rpm }} {{ download_uri }}'
     - unless: 'test -s {{ redis_rpm }}'
     - onchanges_in:
-      - archive: 'Install REDIS Insight RPM'
+      - pkg: 'Install REDIS Insight RPM'
 {%- endif %}
 
 Install REDIS Insight RPM:
-pkg.installed:
+  pkg.installed:
+    - require:{%- if redis_insight.pkg.download_uri %}
+      - file: 'Download REDIS Insight RPM'
+      {%- else %}
+      - cmd: 'Download REDIS Insight RPM'
+      {%- endif %}
     - sources:
       - {{ redis_insight.pkg.name }}: {{ redis_rpm }}
 
@@ -61,4 +66,4 @@ Remove staged REDIS Insight RPM:
   file.absent:
     - name: '{{ redis_rpm }}'
     - require:
-      - file: 'Enforce redis permissions and SELinux'
+      - pkg: 'Install REDIS Insight RPM'
