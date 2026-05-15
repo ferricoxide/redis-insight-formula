@@ -86,7 +86,7 @@ Install REDIS Insight RPM (DB only):
   pkg.installed:
     - extra_install_args:
       - --nogpgcheck
-      - --setopt=tsflags=justdb
+      - --setopt=tsflags=justdb,nodigest
     - require:
       - cmd: 'Extract REDIS Insight Files'
     - sources:
@@ -96,4 +96,4 @@ Remove staged REDIS Insight RPM:
   file.absent:
     - name: '{{ redis_rpm }}'
     - require:
-      - pkg: 'Install REDIS Insight RPM'
+      - pkg: 'Install REDIS Insight RPM (DB only)'
