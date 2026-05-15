@@ -6,4 +6,6 @@
 values:
   pkg:
     name: ''
+    download_uri: ''
+    download_sig: ''
 ...
