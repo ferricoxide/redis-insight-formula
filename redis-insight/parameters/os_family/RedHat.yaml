@@ -13,6 +13,5 @@
 ---
 values:
   pkg:
-    name: redis-insight-redhat
-  config: /etc/redis-insight.conf
+    name: 'redisinsight'
 ...
