@@ -55,28 +55,40 @@ Download REDIS Insight RPM:
 Install REDIS Insight Dependencies:
   pkg.installed:
     - pkgs:
-      - mesa-libgbm
+      - alsa-lib
+      - at-spi2-atk
+      - dejavu-sans-fonts
       - libX11
       - libXcomposite
       - libXdamage
       - libXext
       - libXfixes
       - libXrandr
-      - nss
-      - at-spi2-atk
       - libdrm
-      - alsa-lib
-      - dejavu-sans-fonts
+      - mesa-libgbm
+      - nss
     - require:
-      - pkg: 'Install REDIS Insight RPM'
-
-Install REDIS Insight RPM:
-  pkg.installed:
-    - require:{%- if redis_insight.pkg.download_uri %}
+      {%- if redis_insight.pkg.download_uri %}
       - file: 'Download REDIS Insight RPM'
       {%- else %}
       - cmd: 'Download REDIS Insight RPM'
       {%- endif %}
+
+Extract REDIS Insight Files:
+  cmd.run:
+    - cwd: /
+    - name: 'rpm2cpio {{ redis_rpm }} | cpio -idmv'
+    - require:
+      - pkg: 'Install REDIS Insight Dependencies'
+    - unless: 'rpm -q {{ redis_insight.pkg.name }}'
+
+Install REDIS Insight RPM (DB only):
+  pkg.installed:
+    - extra_install_args:
+      - --nogpgcheck
+      - --setopt=tsflags=justdb
+    - require:
+      - cmd: 'Extract REDIS Insight Files'
     - sources:
       - {{ redis_insight.pkg.name }}: {{ redis_rpm }}
 
