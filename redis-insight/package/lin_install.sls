@@ -7,7 +7,11 @@
 
 {%- set target_arch = grains.get('osarch', 'x86_64') %}
 {%- set redis_rpm = '/tmp/Redis-Insight-linux-' ~ target_arch ~ '.rpm' %}
-{%- set redis_install_loc = '/usr/local/bin' %}
+
+{% set is_fips = False %}
+{% if salt['file.file_exists']('/proc/sys/crypto/fips_enabled') %}
+  {% set is_fips = (salt['file.read']('/proc/sys/crypto/fips_enabled') | trim == '1') %}
+{% endif %}
 
 {#- Determine the download URI #}
 {%- set download_uri = redis_insight.pkg.download_uri %}
@@ -52,6 +56,7 @@ Download REDIS Insight RPM:
       - pkg: 'Install REDIS Insight Dependencies (Explicit)'
 {%- endif %}
 
+{%- if is_fips %}
 Extract REDIS Insight Files:
   cmd.run:
     - cwd: /
@@ -69,6 +74,30 @@ Install REDIS Insight Dependencies (Dynamic):
     - require:
       - pkg: 'Install REDIS Insight Dependencies (Explicit)'
     - unless: 'rpm -q {{ redis_insight.pkg.name }}'
+
+Install REDIS Insight RPM (DB only):
+  cmd.run:
+    - name: 'rpm -ivh --justdb --nodigest --nosignature {{ redis_rpm }}'
+    - require:
+      - cmd: 'Extract REDIS Insight Files'
+    - unless: 'rpm -q {{ redis_insight.pkg.name }}'
+
+Synchronize DNF Database:
+  cmd.run:
+    - name: 'dnf clean expire-cache'
+    - onchanges:
+      - cmd: 'Install REDIS Insight RPM (DB only)'
+{%- else %}
+Install REDIS Insight RPM:
+  pkg.installed:
+    - require:{%- if redis_insight.pkg.download_uri %}
+      - file: 'Download REDIS Insight RPM'
+      {%- else %}
+      - cmd: 'Download REDIS Insight RPM'
+      {%- endif %}
+    - sources:
+      - {{ redis_insight.pkg.name }}: {{ redis_rpm }}
+{%- endif %}
 
 Install REDIS Insight Dependencies (Explicit):
   pkg.installed:
@@ -92,21 +121,12 @@ Install REDIS Insight Dependencies (Explicit):
       - cmd: 'Download REDIS Insight RPM'
       {%- endif %}
 
-Install REDIS Insight RPM (DB only):
-  cmd.run:
-    - name: 'rpm -ivh --justdb --nodigest --nosignature {{ redis_rpm }}'
-    - require:
-      - cmd: 'Extract REDIS Insight Files'
-    - unless: 'rpm -q {{ redis_insight.pkg.name }}'
-
 Remove staged REDIS Insight RPM:
   file.absent:
     - name: '{{ redis_rpm }}'
     - require:
+      {%- if is_fips %}
       - cmd: 'Install REDIS Insight RPM (DB only)'
-
-Synchronize DNF Database:
-  cmd.run:
-    - name: 'dnf clean expire-cache'
-    - onchanges:
-      - cmd: 'Install REDIS Insight RPM (DB only)'
+      {%- else %}
+      - pkg: 'Install REDIS Insight RPM'
+      {%- endif %}
