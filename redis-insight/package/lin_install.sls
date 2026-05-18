@@ -41,7 +41,7 @@ Download REDIS Insight RPM:
     - skip_verify: True
     - source: '{{ redis_insight.pkg.download_uri }}'
     - onchanges_in:
-      - pkg: 'Install REDIS Insight Dependencies'
+      - pkg: 'Install REDIS Insight Dependencies (Explicit)'
 
 {%- else %}
 Download REDIS Insight RPM:
@@ -49,7 +49,7 @@ Download REDIS Insight RPM:
     - name: 'curl -sSLf -o {{ redis_rpm }} {{ download_uri }}'
     - unless: 'test -s {{ redis_rpm }}'
     - onchanges_in:
-      - pkg: 'Install REDIS Insight Dependencies'
+      - pkg: 'Install REDIS Insight Dependencies (Explicit)'
 {%- endif %}
 
 Extract REDIS Insight Files:
@@ -62,13 +62,13 @@ Extract REDIS Insight Files:
 
 Install REDIS Insight Dependencies (Dynamic):
   cmd.run:
-    # 1. Query the downloaded RPM for its requirements safely (--nodigest --nosignature)
-    # 2. Filter out internal RPM build features (rpmlib)
-    # 3. Pass the resulting list of capabilities to DNF to resolve and install natively
-    - name: "rpm -qpR --nodigest --nosignature {{ redis_rpm }} | grep -v '^rpmlib(' | xargs dnf install -y"
-    - unless: 'rpm -q {{ redis_insight.pkg.name }}'
+    - name: >
+        rpm -qpR --nodigest --nosignature {{ redis_rpm }} |
+        grep -v '^rpmlib(' |
+        xargs -d '\n' dnf install -y
     - require:
       - pkg: 'Install REDIS Insight Dependencies (Explicit)'
+    - unless: 'rpm -q {{ redis_insight.pkg.name }}'
 
 Install REDIS Insight Dependencies (Explicit):
   pkg.installed:
@@ -107,8 +107,6 @@ Remove staged REDIS Insight RPM:
 
 Synchronize DNF Database:
   cmd.run:
-    # Running any harmless DNF command forces it to notice the RPM DB changed,
-    # silently triggering its auto-reconciliation and suppressing future warnings.
     - name: 'dnf clean expire-cache'
     - onchanges:
       - cmd: 'Install REDIS Insight RPM (DB only)'
