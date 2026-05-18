@@ -74,6 +74,7 @@ Extract REDIS Insight Files:
     - name: 'rpm2cpio {{ redis_rpm }} | cpio -idmv'
     - require:
       - cmd: 'Install REDIS Insight Dependencies (Dynamic)'
+    - umask: 0022
     - unless: 'rpm -q {{ redis_insight.pkg.name }}'
 
 Install REDIS Insight Dependencies (Dynamic):
