@@ -59,10 +59,12 @@ Download REDIS Insight RPM:
 {%- if is_fips %}
   {%- if salt['grains.get']('selinux:enabled', False) %}
 Allow Redis Insight to bind to internal ports:
-  selinux.boolean_present:
+  selinux.boolean:
     - name: nis_enabled
     - value: True
     - persist: True
+    - require:
+      - pkg: 'Install SELinux management tools'
   {%- endif %}
 
 Ensure REDIS Insight app-directory permissions:
@@ -140,6 +142,10 @@ Install REDIS Insight Dependencies (Explicit):
       {%- else %}
       - cmd: 'Download REDIS Insight RPM'
       {%- endif %}
+
+Install SELinux management tools:
+  pkg.installed:
+    - name: policycoreutils-python-utils
 
 Remove staged REDIS Insight RPM:
   file.absent:
