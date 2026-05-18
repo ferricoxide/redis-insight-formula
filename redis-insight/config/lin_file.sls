@@ -8,12 +8,34 @@
 include:
   - {{ sls_package_install }}
 
+Ensure browser policy-directory exists for use by REDIS Insight:
+  file.directory:
+    - group: {{ redis_insight.config.get('system_group', 'root') }}
+    - makedirs: True
+    - mode: 755
+    - name: {{ redis_insight.config.browser_policy_dir }}
+    - user: root
+
 Ensure parent config-directory exists:
   file.directory:
     - group: {{ redis_insight.config.get('system_group', 'root') }}
     - makedirs: True
     - mode: 755
     - name: {{ salt['file.dirname'](redis_insight.config.global_cfg) }}
+    - user: root
+
+Manage browser policy-file for REDIS Insight:
+  file.managed:
+    - group: {{ redis_insight.config.get('system_group', 'root') }}
+    - mode: 644
+    - name: {{ redis_insight.config.browser_policy_dir }}/redis-insight.json
+    - require:
+      - file: 'Ensure browser policy-directory exists for use by REDIS Insight'
+    - source: {{ files_switch(['browser_policy.json.jinja'],
+                              lookup='redis-insight-browser-policy-file-managed'
+                 )
+              }}
+    - template: jinja
     - user: root
 
 Manage global config-file:
