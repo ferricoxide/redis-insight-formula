@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Redis Insight
 Comment=Redis GUI for viewing and managing data
-Exec=redisinsight %U
+Exec="{{ redis_insight.config.app_dir }}/redisinsight" --no-sandbox --disable-gpu %U
 Icon=redisinsight
 Terminal=false
 Type=Application
