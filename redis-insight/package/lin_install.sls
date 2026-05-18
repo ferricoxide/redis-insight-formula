@@ -57,6 +57,17 @@ Download REDIS Insight RPM:
 {%- endif %}
 
 {%- if is_fips %}
+Ensure REDIS Insight app-directory permissions:
+  file.directory:
+    - name: "{{ redis_insight.config.app_dir }}"
+    - user: root
+    - group: {{ redis_insight.config.get('system_group', 'root') }}
+    - mode: 755
+    - recurse:
+        - mode
+    - require:
+        - cmd: 'Extract REDIS Insight Files'
+
 Extract REDIS Insight Files:
   cmd.run:
     - cwd: /

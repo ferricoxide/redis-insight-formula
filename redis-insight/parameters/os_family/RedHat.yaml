@@ -15,6 +15,7 @@ values:
   pkg:
     name: 'redisinsight'
   config:
+    app_dir: '/opt/Redis Insight'
     browser_policy_dir: '/etc/opt/chrome/policies/managed'
     desktop_file: '/usr/share/applications/redis-insight.desktop'
     eula_accepted: true
