@@ -13,7 +13,7 @@
 ---
 values:
   pkg:
-    name: 'redisinsight'config:
+    name: 'redisinsight'
   config:
     browser_policy_dir: '/etc/opt/chrome/policies/managed'
     eula_accepted: true
