@@ -15,5 +15,5 @@ include:
   - redis-insight.config.win_file
 {%- endif %}
 
-Avoid being a null-router (package/install):
+Avoid being a null-router (config/file):
   test.nop: []
