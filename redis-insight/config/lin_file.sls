@@ -23,6 +23,8 @@ Ensure parent config-directory exists:
 
 Manage browser policy-file for REDIS Insight:
   file.managed:
+    - context:
+        redis_insight: {{ redis_insight | json }}
     - group: {{ redis_insight.config.get('system_group', 'root') }}
     - mode: 644
     - name: {{ redis_insight.config.browser_policy_dir }}/redis-insight.json
