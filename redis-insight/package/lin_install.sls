@@ -104,6 +104,12 @@ Install REDIS Insight RPM (DB only):
       - cmd: 'Extract REDIS Insight Files'
     - unless: 'rpm -q {{ redis_insight.pkg.name }}'
 
+Restore REDIS Insight SELinux contexts:
+  cmd.run:
+    - name: 'fixfiles -R {{ redis_insight.pkg.name }} restore'
+    - onchanges:
+      - cmd: 'Install REDIS Insight RPM (DB only)'
+
 Synchronize DNF Database:
   cmd.run:
     - name: 'dnf clean expire-cache'
