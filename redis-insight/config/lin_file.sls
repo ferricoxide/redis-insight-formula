@@ -21,6 +21,17 @@ Ensure parent config-directory exists:
     - name: {{ salt['file.dirname'](redis_insight.config.global_cfg) }}
     - user: root
 
+Manage REDIS Insight environment profile:
+  file.managed:
+    - name: {{ redis_insight.config.get('profile_file', '/etc/profile.d/redis-insight.sh') }}
+    - source: salt://{{ tplroot }}/files/default/redis-insight.sh.jinja
+    - mode: 644
+    - user: root
+    - group: {{ redis_insight.config.get('system_group', 'root') }}
+    - template: jinja
+    - context:
+        redis_insight: {{ redis_insight | json }}
+
 Manage browser policy-file for REDIS Insight:
   file.managed:
     - context:
