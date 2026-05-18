@@ -20,6 +20,8 @@ values:
     desktop_file: '/usr/share/applications/redis-insight.desktop'
     eula_accepted: true
     global_cfg: '/etc/redis-insight.d/config.json'
+    port: 5540
+    profile_file: '/etc/profile.d/redis-insight.sh'
     system_group: 'root'
     telemetry: false
 ...
