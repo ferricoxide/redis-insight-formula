@@ -52,7 +52,25 @@ Download REDIS Insight RPM:
       - pkg: 'Install REDIS Insight Dependencies'
 {%- endif %}
 
-Install REDIS Insight Dependencies:
+Extract REDIS Insight Files:
+  cmd.run:
+    - cwd: /
+    - name: 'rpm2cpio {{ redis_rpm }} | cpio -idmv'
+    - require:
+      - cmd: 'Install REDIS Insight Dependencies (Dynamic)'
+    - unless: 'rpm -q {{ redis_insight.pkg.name }}'
+
+Install REDIS Insight Dependencies (Dynamic):
+  cmd.run:
+    # 1. Query the downloaded RPM for its requirements safely (--nodigest --nosignature)
+    # 2. Filter out internal RPM build features (rpmlib)
+    # 3. Pass the resulting list of capabilities to DNF to resolve and install natively
+    - name: "rpm -qpR --nodigest --nosignature {{ redis_rpm }} | grep -v '^rpmlib(' | xargs dnf install -y"
+    - unless: 'rpm -q {{ redis_insight.pkg.name }}'
+    - require:
+      - pkg: 'Install REDIS Insight Dependencies (Explicit)'
+
+Install REDIS Insight Dependencies (Explicit):
   pkg.installed:
     - pkgs:
       - alsa-lib
@@ -74,26 +92,23 @@ Install REDIS Insight Dependencies:
       - cmd: 'Download REDIS Insight RPM'
       {%- endif %}
 
-Extract REDIS Insight Files:
-  cmd.run:
-    - cwd: /
-    - name: 'rpm2cpio {{ redis_rpm }} | cpio -idmv'
-    - require:
-      - pkg: 'Install REDIS Insight Dependencies'
-    - unless: 'rpm -q {{ redis_insight.pkg.name }}'
-
 Install REDIS Insight RPM (DB only):
-  pkg.installed:
-    - extra_install_args:
-      - --nogpgcheck
-      - --setopt=tsflags=justdb,nodigest
+  cmd.run:
+    - name: 'rpm -ivh --justdb --nodigest --nosignature {{ redis_rpm }}'
     - require:
       - cmd: 'Extract REDIS Insight Files'
-    - sources:
-      - {{ redis_insight.pkg.name }}: {{ redis_rpm }}
+    - unless: 'rpm -q {{ redis_insight.pkg.name }}'
 
 Remove staged REDIS Insight RPM:
   file.absent:
     - name: '{{ redis_rpm }}'
     - require:
-      - pkg: 'Install REDIS Insight RPM (DB only)'
+      - cmd: 'Install REDIS Insight RPM (DB only)'
+
+Synchronize DNF Database:
+  cmd.run:
+    # Running any harmless DNF command forces it to notice the RPM DB changed,
+    # silently triggering its auto-reconciliation and suppressing future warnings.
+    - name: 'dnf clean expire-cache'
+    - onchanges:
+      - cmd: 'Install REDIS Insight RPM (DB only)'
