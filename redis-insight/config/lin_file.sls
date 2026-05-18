@@ -5,9 +5,6 @@
 {%- from tplroot ~ "/map.jinja" import mapdata as redis_insight with context %}
 {%- from tplroot ~ "/libtofs.jinja" import files_switch with context %}
 
-include:
-  - {{ sls_package_install }}
-
 Ensure browser policy-directory exists for use by REDIS Insight:
   file.directory:
     - group: {{ redis_insight.config.get('system_group', 'root') }}
