@@ -13,6 +13,11 @@
 ---
 values:
   pkg:
-    name: 'redisinsight'
-  config: '/etc/redis-insight.d/config.json'
+    name: 'redisinsight'config:
+  config:
+    browser_policy_dir: '/etc/opt/chrome/policies/managed'
+    eula_accepted: true
+    global_cfg: '/etc/redis-insight.d/config.json'
+    system_group: 'root'
+    telemetry: false
 ...
