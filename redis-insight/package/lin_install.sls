@@ -57,6 +57,14 @@ Download REDIS Insight RPM:
 {%- endif %}
 
 {%- if is_fips %}
+  {%- if salt['grains.get']('selinux:enabled', False) %}
+Allow Redis Insight to bind to internal ports:
+  selinux.boolean_present:
+    - name: nis_enabled
+    - value: True
+    - persist: True
+  {%- endif %}
+
 Ensure REDIS Insight app-directory permissions:
   file.directory:
     - name: "{{ redis_insight.config.app_dir }}"
