@@ -38,6 +38,20 @@ Manage browser policy-file for REDIS Insight:
     - template: jinja
     - user: root
 
+Manage desktop shortcut for REDIS Insight:
+  file.managed:
+    - context:
+        redis_insight: {{ redis_insight | json }}
+    - group: {{ redis_insight.config.get('system_group', 'root') }}
+    - mode: 644
+    - name: {{ redis_insight.config.desktop_file }}
+    - source: {{ files_switch(['redis-insight.desktop.jinja'],
+                              lookup='redis-insight-desktop-shortcut'
+                 )
+              }}
+    - template: jinja
+    - user: root
+
 Manage global config-file:
   file.managed:
     - context:

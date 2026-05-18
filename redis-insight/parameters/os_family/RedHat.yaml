@@ -16,6 +16,7 @@ values:
     name: 'redisinsight'
   config:
     browser_policy_dir: '/etc/opt/chrome/policies/managed'
+    desktop_file: '/usr/share/applications/redis-insight.desktop'
     eula_accepted: true
     global_cfg: '/etc/redis-insight.d/config.json'
     system_group: 'root'
