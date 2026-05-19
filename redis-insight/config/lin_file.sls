@@ -43,7 +43,7 @@ Manage browser policy-file for REDIS Insight:
       - file: 'Ensure browser policy-directory exists for use by REDIS Insight'
     - source: {{ files_switch(['browser_policy.json.jinja'],
                               lookup='redis-insight-browser-policy-file-managed'
-                 )
+                  )
               }}
     - template: jinja
     - user: root
@@ -57,7 +57,7 @@ Manage desktop shortcut for REDIS Insight:
     - name: {{ redis_insight.config.desktop_file }}
     - source: {{ files_switch(['redis-insight.desktop.jinja'],
                               lookup='redis-insight-desktop-shortcut'
-                 )
+                  )
               }}
     - template: jinja
     - user: root
@@ -73,7 +73,7 @@ Manage global config-file:
       - file: 'Ensure parent config-directory exists'
     - source: {{ files_switch(['config.json.jinja'],
                               lookup='redis-insight-config-file-managed'
-                 )
+                  )
               }}
     - template: jinja
     - user: root
