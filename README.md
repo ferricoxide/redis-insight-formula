@@ -46,7 +46,12 @@ Executes _just_ the `config` state to install/configure the REDIS Insight utilit
 
 Executes _just_ the `config` state to uninstall the REDIS Insight utility client-configuration (etc.) files and, on Windows, remove any registry-keys set by prior install-runs of the formula.
 
+## Linux-base deployment
+
+Pleas see the [README_Linux.md](README_Linux.md) file for information on use of this formula with ("enterprise") Linux-based hosts.
+
 
 
 [^1]: As of this README's writing, only Enterprise Linux and related distros (Red Hat and Oracle Enterprise, CentOS Stream, Rocky and Alma Linux). It has only been specifically tested with EL **_9_** variants.
 [^2]: As of this README's writing, this functionality has only been tested on Windows Server 2022
+
